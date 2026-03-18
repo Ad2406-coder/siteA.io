@@ -167,30 +167,102 @@
   #projects { background: var(--white); }
   .ph { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; }
   .ph-count { font-size: 13px; color: var(--muted); font-weight: 300; }
-  .plist { display: flex; flex-direction: column; gap: 2px; }
-  .prow {
-    display: grid; grid-template-columns: 52px 1fr auto auto;
-    gap: 28px; align-items: center;
-    padding: 26px 28px; background: var(--bg); border-radius: 14px;
-    text-decoration: none; color: var(--ink);
-    transition: background 0.25s, transform 0.25s;
-    cursor: pointer;
+
+  /* GRID CARDS */
+  .pgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
   }
-  .prow:hover { background: var(--ink); color: white; transform: translateX(8px); }
-  .prow:hover .pnum { color: rgba(255,255,255,0.15); }
-  .prow:hover .pdesc { color: rgba(255,255,255,0.55); }
-  .prow:hover .ptag { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); border-color: transparent; }
-  .prow:hover .parr { transform: rotate(-45deg); color: white; }
-  .pnum { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--line); letter-spacing: -1px; transition: color 0.25s; }
-  .ptitle { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 3px; }
-  .pdesc { font-size: 13px; color: var(--muted); font-weight: 300; transition: color 0.25s; }
-  .ptags { display: flex; gap: 7px; flex-wrap: wrap; }
+  .pcard {
+    aspect-ratio: 1 / 1;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 28px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .pcard::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--ink);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .pcard:hover { transform: translateY(-6px); box-shadow: 0 24px 56px rgba(26,22,18,0.13); }
+  .pcard:hover::before { opacity: 1; }
+  .pcard:hover .pnum,
+  .pcard:hover .ptitle,
+  .pcard:hover .pdesc { color: white; }
+  .pcard:hover .ptag { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border-color: transparent; }
+  .pcard:hover .parr { color: white; transform: rotate(-45deg) scale(1.1); }
+  .pcard > * { position: relative; z-index: 1; }
+  .pcard-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .pnum { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: rgba(26,22,18,0.12); letter-spacing: -1px; transition: color 0.3s; }
+  .parr { font-size: 22px; color: var(--muted); transition: transform 0.3s, color 0.3s; }
+  .ptitle { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; transition: color 0.3s; }
+  .pdesc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.6; transition: color 0.3s; }
+  .ptags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
   .ptag {
     font-size: 11px; font-weight: 500; padding: 5px 12px;
     background: var(--white); border: 1px solid var(--line);
     border-radius: 100px; color: var(--ink2); transition: all 0.25s;
   }
-  .parr { font-size: 20px; color: var(--muted); transition: transform 0.25s, color 0.25s; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(26,22,18,0.55);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--white);
+    border-radius: 28px;
+    max-width: 560px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    padding: 44px;
+    position: relative;
+    transform: translateY(32px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(.22,.9,.36,1);
+    box-shadow: 0 40px 100px rgba(26,22,18,0.18);
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-close {
+    position: absolute; top: 18px; right: 18px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--ink2);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .modal-close:hover { background: var(--ink); color: white; transform: rotate(90deg); }
+  .modal-num { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--accent); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 20px; }
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .modal-tag { padding: 7px 16px; background: var(--tag-bg); border: 1px solid var(--line); border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--ink2); }
+  .modal-divider { height: 1px; background: var(--line); margin-bottom: 24px; }
+  .modal-label { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; margin-top: 24px; }
+  .modal-label:first-of-type { margin-top: 0; }
+  .modal-body { font-size: 15px; line-height: 1.8; color: var(--ink2); font-weight: 300; }
+  .modal-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 32px; padding: 13px 26px;
+    background: var(--ink); color: white;
+    text-decoration: none; font-size: 14px; font-weight: 500;
+    border-radius: 100px; transition: background 0.2s, transform 0.2s;
+  }
+  .modal-link:hover { background: var(--accent); transform: translateY(-2px); }
 
   /* CONTACT */
   .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
@@ -241,8 +313,7 @@
     .wrap { padding: 60px 24px; }
     .about-grid, .skills-layout, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
     .ph { flex-direction: column; align-items: flex-start; gap: 6px; }
-    .prow { grid-template-columns: 1fr auto; }
-    .pnum, .ptags { display: none; }
+    .pgrid { grid-template-columns: 1fr 1fr; }
     footer { flex-direction: column; gap: 6px; padding: 20px 24px; }
   }
 </style>
@@ -379,28 +450,126 @@
       </div>
       <span class="ph-count">3 projets sélectionnés</span>
     </div>
-    <div class="plist">
-      <div class="prow reveal">
-        <div class="pnum">01</div>
-        <div><div class="ptitle">Projet Alpha</div><div class="pdesc">Application web full-stack avec tableau de bord temps réel et API RESTful</div></div>
-        <div class="ptags"><span class="ptag">React</span><span class="ptag">Node.js</span><span class="ptag">PostgreSQL</span></div>
-        <div class="parr">↗</div>
+    <div class="pgrid">
+      <div class="pcard reveal" onclick="openModal('p1')">
+        <div class="pcard-top">
+          <div class="pnum">01</div>
+          <div class="parr">↗</div>
+        </div>
+        <div>
+          <div class="ptitle">Projet Alpha</div>
+          <div class="pdesc">Application web full-stack avec tableau de bord temps réel et API RESTful</div>
+          <div class="ptags">
+            <span class="ptag">React</span>
+            <span class="ptag">Node.js</span>
+            <span class="ptag">PostgreSQL</span>
+          </div>
+        </div>
       </div>
-      <div class="prow reveal">
-        <div class="pnum">02</div>
-        <div><div class="ptitle">Projet Beta</div><div class="pdesc">API backend scalable avec microservices, docs Swagger et tests automatisés</div></div>
-        <div class="ptags"><span class="ptag">Python</span><span class="ptag">FastAPI</span><span class="ptag">MongoDB</span></div>
-        <div class="parr">↗</div>
+      <div class="pcard reveal" onclick="openModal('p2')">
+        <div class="pcard-top">
+          <div class="pnum">02</div>
+          <div class="parr">↗</div>
+        </div>
+        <div>
+          <div class="ptitle">Projet Beta</div>
+          <div class="pdesc">API backend scalable avec microservices, docs Swagger et tests automatisés</div>
+          <div class="ptags">
+            <span class="ptag">Python</span>
+            <span class="ptag">FastAPI</span>
+            <span class="ptag">MongoDB</span>
+          </div>
+        </div>
       </div>
-      <div class="prow reveal">
-        <div class="pnum">03</div>
-        <div><div class="ptitle">Projet Gamma</div><div class="pdesc">Interface moderne avec animations fluides et design system complet</div></div>
-        <div class="ptags"><span class="ptag">Vue.js</span><span class="ptag">TypeScript</span><span class="ptag">GSAP</span></div>
-        <div class="parr">↗</div>
+      <div class="pcard reveal" onclick="openModal('p3')">
+        <div class="pcard-top">
+          <div class="pnum">03</div>
+          <div class="parr">↗</div>
+        </div>
+        <div>
+          <div class="ptitle">Projet Gamma</div>
+          <div class="pdesc">Interface moderne avec animations fluides et design system complet</div>
+          <div class="ptags">
+            <span class="ptag">Vue.js</span>
+            <span class="ptag">TypeScript</span>
+            <span class="ptag">GSAP</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const projects = {
+  p1: {
+    num: 'Projet 01',
+    title: 'Projet Alpha',
+    tags: ['React', 'Node.js', 'PostgreSQL'],
+    description: 'Application web full-stack avec tableau de bord temps réel et API RESTful. Le projet intègre une interface interactive construite avec React et un backend Node.js connecté à une base de données PostgreSQL.',
+    role: 'Développeur Full-Stack',
+    date: '2025',
+    link: '#'
+  },
+  p2: {
+    num: 'Projet 02',
+    title: 'Projet Beta',
+    tags: ['Python', 'FastAPI', 'MongoDB'],
+    description: 'API backend scalable conçue avec une architecture microservices, documentation Swagger intégrée et suite de tests automatisés. Déployée sur un environnement Docker pour faciliter la scalabilité.',
+    role: 'Développeur Backend',
+    date: '2025',
+    link: '#'
+  },
+  p3: {
+    num: 'Projet Gamma',
+    title: 'Projet Gamma',
+    tags: ['Vue.js', 'TypeScript', 'GSAP'],
+    description: 'Interface web moderne avec animations fluides et design system complet. Utilisation de GSAP pour les transitions et TypeScript pour une base de code robuste et maintenable.',
+    role: 'Développeur Frontend',
+    date: '2024',
+    link: '#'
+  }
+};
+
+function openModal(id) {
+  const p = projects[id];
+  if (!p) return;
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-num">${p.num}</div>
+    <div class="modal-title">${p.title}</div>
+    <div class="modal-tags">${p.tags.map(t => `<span class="modal-tag">${t}</span>`).join('')}</div>
+    <div class="modal-divider"></div>
+    <div class="modal-label">Description</div>
+    <p class="modal-body">${p.description}</p>
+    <div class="modal-label">Rôle</div>
+    <p class="modal-body">${p.role}</p>
+    <div class="modal-label">Année</div>
+    <p class="modal-body">${p.date}</p>
+    <a href="${p.link}" class="modal-link">Voir le projet ↗</a>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
 
 <!-- CONTACT -->
 <section id="contact">
@@ -413,7 +582,7 @@
       <div class="reveal">
         <div class="ccard">
           <div class="cf-label">Email</div>
-          <div class="cf-val"><a href="mailto:aurelien.daly@bbox.fr">aurelien.daly@bbox.fr</a></div>
+          <div class="cf-val"><a href="/cdn-cgi/l/email-protection#7514000710191c101b5b1114190c3517171a0d5b1307"><span class="__cf_email__" data-cfemail="caabbfb8afa6a3afa4e4aeaba6b38aa8a8a5b2e4acb8">[email&#160;protected]</span></a></div>
           <div class="cf-label">Localisation</div>
           <div class="cf-val">France 🇫🇷</div>
           <div class="cf-label">Disponibilité</div>
@@ -454,12 +623,9 @@
   const links = document.querySelectorAll('.nav-links a:not(.nav-btn)');
   window.addEventListener('scroll', () => {
     let cur = '';
-    secs.forEach(s => { if (window.scrollY >= s.offsetTop - 160) cur = s.id; });
-    links.forEach(a => {
-      a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--ink)' : '';
-      a.style.fontWeight = a.getAttribute('href') === '#' + cur ? '600' : '';
+    secs.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+    links.forEach(l => {
+      l.style.color = l.getAttribute('href') === '#' + cur ? 'var(--ink)' : '';
     });
   });
 </script>
-</body>
-</html>
